@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> EXAM -PREP</title>
+    </head>
+<body>
+    <h2>Student registration form</h2>
+    <form id="student form">
+        <input type="text" id="name" placeholder="NaMe" required><br>
+        <input type="email" id="email" placeholder="PlAcEHoLDeR" required><br>
+        <input type="number" id="phnumber" placeholder="PhOnEnUmBeR" required><br>
+        <button type="submit">Submit the data my boye</button>
+    </form>
+    <p id="statusmsg"></p>
+<!--js starts here-->
+    <script>
+        document.getElementById("student form").addEventListener("submit",async function(event){
+            event.preventDefault()
+        
+        const student_data_to_send_backend={
+            name:document.getElementById("name").value,
+            email:document.getElementById("email").value,
+            phone:document.getElementById("phnumber").value
+        }
+        const status=document.getElementById("statusmsg");
+        status.innerText="sending...hohoho....."
+//sending data to fastapi(Network request)
+        try{
+//RULE : if we send something then we must have/get something as response even if it a thumps up
+            const response=await fetch("http://127.0.0.1:8000/submit",{//fetch just means open two way communication channel not literally "Fetch/go get"
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify(student_data_to_send_backend)
+            })
+            const result_from_backend=await response.json()
+            if (response.ok){
+                status.innerText="Success my boyee , the message is"+ result_from_backend.message;
+            }
+            else {
+                status.innerText="Failure my boyeee , the message is"+(result_from_backend.detail || JSON.stringify(result_from_backend));
+            
+            }
+        }
+        catch(error)
+        {
+            status.innerText="Error:couldnot connect to the server my boyeeee"
+        }
+    })
+    </script>
+</body>
+</html>
